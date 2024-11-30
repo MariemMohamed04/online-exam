@@ -1,4 +1,6 @@
 export interface IHeading {
   text:string,
-  className?: string
+  span?: string,
+  className?: string,
+  spanClassName?: string;
 }

@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
+import SideBanner from "./sideBanner/sideBanner";
 import Navbar from "@/containers/Navabr";
+import SocialProviders from '@/containers/AuthLayout/SocialProviders'
+// import Navbar from "@/containers/Navabr";
 
 
 export const metadata: Metadata = {
@@ -18,8 +21,19 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <Navbar/>
-        {children}
+          {/* <Navbar/> */}
+          
+          <div className={`grid grid-cols-2 h-screen`}>
+      <div className="">
+      <SideBanner/>
+      </div>
+      <div className="">
+        <Navbar/>
+      {children}
+      <SocialProviders/>
+      </div>
+    </div>
+        
         </AuthProvider>
       </body>
     </html>
