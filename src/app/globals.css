@@ -63,5 +63,28 @@ a {
   line-height: 24px;
 }
 
+.custom-confirm-btn {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 10px 20px;
+}
+
+.custom-cancel-btn {
+  background-color: #f44336; /* Red */
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 10px 20px;
+}
+
+.custom-confirm-btn:hover {
+  background-color: #45a049;
+}
+
+.custom-cancel-btn:hover {
+  background-color: #e53935;
+}
 
 

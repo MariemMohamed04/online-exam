@@ -1,10 +1,15 @@
 "use client"
 
+import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React from 'react'
 
+type props = {
+  user: User
+}
 
-export default function UserCard() {
+
+export default function UserCard({ user }: props) {
   const { data: session } = useSession();
   return (
     <>

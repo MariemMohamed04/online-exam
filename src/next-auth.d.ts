@@ -8,10 +8,12 @@ declare module "next-auth" {
     id: string;
     email: string;
     username?: string;
+    
   }
 
   interface Session {
     token: string;
+    provider?: string;
   }
 }
 

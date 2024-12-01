@@ -7,8 +7,10 @@ export default function SignUpPage() {
   return (
     <>
 
-    <HeaderComponent text='Sign up'/>
-    <SignUpForm />
+<div className="flex justify-center items-center flex-col">
+<HeaderComponent text='Sign up' className='mb-6'/>
+<SignUpForm />
+</div>
 
     </>
   )

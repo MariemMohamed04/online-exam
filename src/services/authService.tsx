@@ -5,46 +5,71 @@ import Swal from "sweetalert2";
 // import { getAuthToken } from "@utils/getAuthToken";
 import Cookies from 'js-cookie';
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import signUpInfo from '@/interfaces/ISignUpInfo'
 import ISignUpInfo from "@/interfaces/ISignUpInfo";
+import { useRouter } from "next/navigation";
+
+
+
 
 // For Sign In
-// export async function signin(email: string, password: string) {
-//   const res = await fetch("https://exam.elevateegy.com/api/v1/auth/signin", {
-//     body: JSON.stringify({ email, password }),
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-
-//   const user = await res.json();
-//   if (!user || !user?.user?.email) {
-//     throw new Error("Authentication failed");
-//   }
-//   return user;
-// }
-
-// For Sign Up
-export async function signup(signUpInfo: ISignUpInfo) {
-try {
-  const res = await axios.post("https://exam.elevateegy.com/api/v1/auth/signup", {
-    signUpInfo
-  });
-  console.log(res.data);
-  return res;
-} catch (error) {
-  if (axios.isAxiosError(error)) {
-    const errorMessage = error.response?.data?.message || "Something went wrong.";
-    return Promise.reject(errorMessage);
-  } else {
-    return Promise.reject("An unexpected error occurred.");
+export async function signin(email: string, password: string) {
+  try {
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: "/home/client",
+    });
+    Swal.fire({
+      title: "Success",
+      text: "Signing in succeeded",
+      icon: "success",
+    });
+    return res;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || "Something went wrong.";
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      });
+      return Promise.reject(errorMessage);
+    } else {
+      return Promise.reject("An unexpected error occurred.");
+    }
   }
 }
 
 
+// For Sign Up
+export async function signup(signUpInfo: ISignUpInfo) {
+  try {
+    const res = await axios.post("https://exam.elevateegy.com/api/v1/auth/signup", signUpInfo);
+    console.log(res.data);
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: 'Account created successfully!',
+    });
+    return res;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || "Something went wrong.";
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage,
+      });
+      return Promise.reject(errorMessage);
+    } else {
+      return Promise.reject("An unexpected error occurred.");
+    }
+  }
 }
+
 
 // For Forgot Password
 export async function forgotPassword(email: string) {
@@ -53,60 +78,87 @@ export async function forgotPassword(email: string) {
       "https://exam.elevateegy.com/api/v1/auth/forgotPassword",
       { email }
     );
+    Swal.fire({
+      icon: 'success',
+      title: 'Code sent successfully',
+      text: 'OTP sent to your email',
+    });
     return res;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data?.message || "Something went wrong.";
+      Swal.fire({
+        icon: 'error',
+        title: 'Code sending failed',
+        text: errorMessage,
+      });
       return Promise.reject(errorMessage);
     } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Reset Failed',
+        text: 'An unexpected error occurred.',
+      });
       return Promise.reject("An unexpected error occurred.");
     }
   }
 }
+
+
+// For Verify Code
 export async function verifyResetCode(resetCode: any) {
-  debugger;
   try {
     const res = await axios.post(
       "https://exam.elevateegy.com/api/v1/auth/verifyResetCode",
       { resetCode }
     );
+    Swal.fire({
+      icon: 'success',
+      title: 'Code Verified',
+      text: 'Your code has been verified',
+    });
     return res;
   } catch (error: any) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Verify Code Failed',
+      text: 'Please, enter correct code.',
+    });
     return Promise.reject(error.response?.data || error.message);
   }
 }
 
 
-
 // For Reset Password
-export async function resetPassword(token: string, newPassword: string) {
-  const res = await fetch("https://exam.elevateegy.com/api/v1/auth/reset-password", {
-    body: JSON.stringify({ token, newPassword }),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  const response = await res.json();
-  if (!response?.success) {
-    throw new Error("Failed to reset password");
+export async function resetPassword(email: string, newPassword: string) {
+  try {
+    const res = await axios.put(
+      'https://exam.elevateegy.com/api/v1/auth/resetPassword',
+      { email, newPassword }
+    );
+    Swal.fire({
+      icon: 'success',
+      title: 'Password Reset Successful',
+      text: 'Your password has been reset successfully.',
+    });
+    return res;
+  } catch (error) {
+    let errorMessage = 'An unexpected error occurred.';
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || 'Something went wrong.';
+    }
+    Swal.fire({
+      icon: 'error',
+      title: 'Password Reset Failed',
+      text: errorMessage,
+    });
+    return Promise.reject(errorMessage);
   }
-  return response;
 }
 
 // For Sign Out
 export async function signout() {
-  const token = Cookies.get("auth_token"); // Get token from cookies
-
-  if (!token) {
-    Swal.fire({
-      title: "Error",
-      text: "No valid session token found. Please sign in again.",
-      icon: "error",
-    });
-    return;
-  }
+  const { data: session } = useSession();
 
   const result = await Swal.fire({
     title: "Are you sure?",
@@ -119,30 +171,24 @@ export async function signout() {
 
   if (result.isConfirmed) {
     try {
-      const res = await fetch("https://exam.elevateegy.com/api/v1/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await axios.get("https://exam.elevateegy.com/api/v1/auth/logout", {
+        headers: { token: session?.token },
       });
-
-      if (res.ok) {
+      if (res.status >= 200 && res.status < 300) {
         Swal.fire({
           title: "Signed out",
           text: "You have successfully signed out.",
           icon: "success",
         });
-
-        // Clear the token from cookies
-        Cookies.remove("auth_token");
-        window.location.href = "/signin";
+        return res;
       } else {
         throw new Error("Sign out failed");
       }
     } catch (error) {
-      // Narrowing the type of 'error' safely
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      let errorMessage = 'An unexpected error occurred.';
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || 'Something went wrong.';
+      }
       Swal.fire({
         title: "Error",
         text: errorMessage,
@@ -152,13 +198,3 @@ export async function signout() {
   }
 }
 
-// export default async function GetProfileData() {
-//   const { data: session } = useSession();
-//   const response = await axios.get("https://exam.elevateegy.com/api/v1/auth/profileData",
-//     {
-//       headers: {
-//         token: `${session.token}`,
-//       }
-//     }
-//   );
-// }

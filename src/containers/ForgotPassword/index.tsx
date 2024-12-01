@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import * as Yup from "yup";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import FieldComponent from '@components/Field/index';
@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { forgotPassword } from '@/services/authService';
 import Swal from 'sweetalert2';
+import Loading from '@/components/Loading';
 
 
 const validationSchema = Yup.object({
@@ -20,6 +21,19 @@ const validationSchema = Yup.object({
 export default function ForgotPassword() {
 
   const router = useRouter();
+  const [isLoading, setLoading] = useState(false);
+  const handleSubmit = async (values: any) => {
+    const { email } = values;
+    try {
+      setLoading(true);
+      await forgotPassword(email);
+      router.push('/verifyCode');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
 <>
@@ -27,35 +41,10 @@ export default function ForgotPassword() {
 <Formik
         initialValues={{ email: "" }}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          try {
-            const { email } = values;
-            const res = await forgotPassword(email);
-
-            if (res.data.message === "success") {
-              Swal.fire({
-                title: "Success",
-                text: "Code has been sent to your email.",
-                icon: "success",
-              }).then(() => {
-                router.push(res.data.url || "/verifyCode");
-              });
-            } else {
-              throw new Error("Failed to send the code.");
-            }
-          } catch (error: any) {
-            Swal.fire({
-              title: "Error",
-              text: error.message || "Something went wrong.",
-              icon: "error",
-            });
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ errors, touched }) => (
-          <Form className="w-[35%] flex flex-col gap-6">
-            <p className="font-semibold text-lg">Forgot you Password?</p>
-
+          <Form className="flex flex-col gap-6">
             <div className="form-field">
               <FieldComponent
                 name="email"
@@ -69,7 +58,11 @@ export default function ForgotPassword() {
                 className="text-red-500 text-sm"
               />
             </div>
+            {isLoading ? (
+                <Loading />
+              ) : (
             <ButtonComponent type="submit" text="Send Code" />
+              )}
           </Form>
         )}
       </Formik>

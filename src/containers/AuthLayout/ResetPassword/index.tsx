@@ -1,72 +1,65 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Swal from "sweetalert2";
-import { getSession, signIn } from "next-auth/react";
 import FieldComponent from '@components/Field/index';
-import Link from "next/link";
-import { useState } from "react";
 import ButtonComponent from "@/components/Button";
-import { signin } from "@/services/authService";
+import { resetPassword } from "@/services/authService";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Loading from "@/components/Loading";
-
+import { getSession, signIn } from "next-auth/react";
 
 const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
-  password: Yup.string()
+  newPassword: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/\d/, "Password must contain at least one number")
     .required("Password is required"),
+    rePassword: Yup.string()
+    .oneOf([Yup.ref("newPassword"), ""], "Passwords must match")
+    .required("Confirm password is required"),  
 });
 
-export default function SignInForm() {
+export default function ResetPasswordForm() {
 
-  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
-
   const handleSubmit = async (values: any) => {
-    const { email, password } = values;
+    const { email, newPassword } = values;
     try {
       setLoading(true);
-      const response = await signin(email, password);
-      console.log(response);
-      
-      if (response?.ok) {
-        const session = await getSession();
-        const token = session?.token;
-
-        if (token) {
-          const expiryTime = new Date().getTime() + 24 * 60 * 60 * 1000;
-
-          if (rememberMe) {
-            localStorage.setItem("token", token);
-            localStorage.setItem("expiryTime", expiryTime.toString());
-          } else {
-            sessionStorage.setItem("token", token);
-            sessionStorage.setItem("expiryTime", expiryTime.toString());
-          }
-        }
-        router.push("/home/client");
+      const res = await resetPassword(email, newPassword);
+      if (res.data.message === "success" && res.data.token) {
+        await signIn("credentials", {
+          token: res.data.token,
+          callbackUrl: "/client",
+          redirect: false,
+        });
+  
+        console.log("Token successfully set in session");
       }
+      router.push('/client');
     } catch (error) {
       console.error(error);
-    }finally {
+    } finally {
       setLoading(false);
     }
-  }
-
-
+  };
 
   return (
-    <div className="flex flex-col gap-8 justify-center items-center h-full">
-      <Formik
-        initialValues={{ email: "", password: "", rememberMe: false }}
+    <>
+    <div className="">
+    <Formik
+        initialValues={{
+          email: "",
+          newPassword: "",
+          rePassword: "",
+        }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -89,40 +82,38 @@ export default function SignInForm() {
             <div className="form-field">
               <Field
                 type="password"
-                name="password"
-                placeholder="Password"
-                className={`${errors.password && touched.password ? 'input-error' : ''}`}
+                name="newPassword"
+                placeholder="New Password"
+                className={`${errors.newPassword && touched.newPassword ? 'input-error' : ''}`}
               />
               <ErrorMessage
-                name="password"
+                name="newPassword"
                 component="div"
                 className="text-red-500 text-sm"
               />
             </div>
-            <div className="flex justify-between items-center">
-              <div className="form-field flex items-center">
-                <Field
-                  type="checkbox"
-                  name="rememberMe"
-                  id="rememberMe"
-                  className="mr-2"
-                />
-                <label htmlFor="rememberMe">Remember Me</label>
-              </div>
-
-              <Link
-                href={"/forgotPassword"}
-              >Recover Password?</Link>
+            <div className="form-field">
+              <Field
+                type="password"
+                name="rePassword"
+                placeholder="Re-enter Password"
+                className={`${errors.rePassword && touched.rePassword ? 'input-error' : ''}`}
+              />
+              <ErrorMessage
+                name="rePassword"
+                component="div"
+                className="text-red-500 text-sm"
+              />
             </div>
             {isLoading ? (
                 <Loading />
               ) : (
-            <ButtonComponent type="submit" text="Sign in" />
+                <ButtonComponent type="submit" text="Reset Password" />
               )}
           </Form>
         )}
       </Formik>
     </div>
-  );
+    </>
+  )
 }
-

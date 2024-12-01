@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import * as Yup from "yup";
 import { Formik, Form, ErrorMessage } from "formik";
 import FieldComponent from '@components/Field/index';
 import ButtonComponent from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { verifyResetCode } from '@/services/authService';
-import Swal from 'sweetalert2';
+import Link from 'next/link';
+import Loading from '@/components/Loading';
 
 
 const validationSchema = Yup.object({
@@ -18,42 +19,29 @@ const validationSchema = Yup.object({
 
 export default function VerifyCode() {
   const router = useRouter();
+  const [isLoading, setLoading] = useState(false);
+  const handleSubmit = async (values: any) => {
+    const { resetCode } = values;
+    try {
+      setLoading(true);
+      await verifyResetCode(resetCode);
+      router.push('/resetPassword');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
     <div className="flex flex-col gap-8 justify-center items-center h-full">
 <Formik
         initialValues={{ resetCode: "" }}
         validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          debugger;
-          try {
-            const { resetCode } = values;
-            const res = await verifyResetCode(resetCode);
-
-            if (res.data.status === "Success") {
-              Swal.fire({
-                title: "Success",
-                text: "Code has been verified successfully",
-                icon: "success",
-              }).then(() => {
-                router.push(res.data.url || "/");
-              });
-            } else {
-              throw new Error("Failed to verify code.");
-            }
-          } catch (error: any) {
-            Swal.fire({
-              title: "Error",
-              text: error.message || "Something went wrong.",
-              icon: "error",
-            });
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         {({ errors, touched }) => (
-          <Form className="w-[35%] flex flex-col gap-6">
-            <p className="font-semibold text-lg">Verify Code</p>
-
+          <Form className="flex flex-col gap-6">            
             <div className="form-field">
               <FieldComponent
                 name="resetCode"
@@ -67,7 +55,15 @@ export default function VerifyCode() {
                 className="text-red-500 text-sm"
               />
             </div>
+            <div className="text-right">
+            Didn’t receive a code?
+              <Link href={'/forgotPassword'} className='pl-1 text-[#4461F2]'>Resend</Link>
+            </div>
+            {isLoading ? (
+                <Loading />
+              ) : (
             <ButtonComponent type="submit" text="Verify" />
+              )}
           </Form>
         )}
       </Formik>
