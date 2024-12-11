@@ -9,7 +9,7 @@ import FieldComponent from '@components/Field/index';
 import Link from "next/link";
 import { useState } from "react";
 import ButtonComponent from "@/components/Button";
-import { signup } from "@/services/authService";
+import { signup } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
 

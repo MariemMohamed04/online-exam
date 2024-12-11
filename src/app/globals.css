@@ -87,4 +87,12 @@ a {
   background-color: #e53935;
 }
 
+#quiz-search {
+  background-color: #f8f9fa;
+  border: 2px solid #007bff;
+  width: 762px;
+  height: 61px;
+  padding-left: 2.5rem;
+  font-size: 14px;
+}
 

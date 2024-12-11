@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client"
+// "use client"
 import Swal from "sweetalert2";
 // import { getAuthToken } from "@utils/getAuthToken";
 import Cookies from 'js-cookie';
 import axios from "axios";
-import { signIn, useSession } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import signUpInfo from '@/interfaces/ISignUpInfo'
 import ISignUpInfo from "@/interfaces/ISignUpInfo";
 import { useRouter } from "next/navigation";
-
+import IAuthInfo from "@/interfaces/IAuthInfo";
+import { signOut as nextAuthSignOut } from "next-auth/react";
 
 
 
 // For Sign In
-export async function signin(email: string, password: string) {
+export async function signin(signInInfo: IAuthInfo) {
   try {
     const res = await signIn("credentials", {
-      email,
-      password,
+      ...signInInfo,
+      callbackUrl: "/dashboard/home",
       redirect: false,
-      callbackUrl: "/home/client",
     });
     Swal.fire({
       title: "Success",
@@ -157,44 +157,80 @@ export async function resetPassword(email: string, newPassword: string) {
 }
 
 // For Sign Out
-export async function signout() {
+export function useSignout() {
   const { data: session } = useSession();
 
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You are about to sign out.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
-  });
+  const signout = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to sign out.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "OK",
+      cancelButtonText: "Cancel",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      const res = await axios.get("https://exam.elevateegy.com/api/v1/auth/logout", {
-        headers: { token: session?.token },
-      });
-      if (res.status >= 200 && res.status < 300) {
-        Swal.fire({
-          title: "Signed out",
-          text: "You have successfully signed out.",
-          icon: "success",
+    Swal.fire({
+      title: "Token",
+      text: session?.token,
+      icon: "info",
+    });
+
+
+    if (result.isConfirmed) {
+      try {
+        const res = await axios.get("https://exam.elevateegy.com/api/v1/auth/logout", {
+          headers: { token: session?.token },
         });
-        return res;
-      } else {
-        throw new Error("Sign out failed");
+        if (res.status >= 200 && res.status < 300) {
+          Swal.fire({
+            title: "Signed out",
+            text: "You have successfully signed out.",
+            icon: "success",
+          });
+          return res;
+        } else {
+          throw new Error("Sign out failed");
+        }
+      } catch (error) {
+        let errorMessage = "An unexpected error occurred.";
+        if (axios.isAxiosError(error)) {
+          errorMessage = error.response?.data?.message || "Something went wrong.";
+        }
+        Swal.fire({
+          title: "Error",
+          text: errorMessage,
+          icon: "error",
+        });
       }
-    } catch (error) {
-      let errorMessage = 'An unexpected error occurred.';
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || 'Something went wrong.';
-      }
+    }
+  };
+
+  return { signout };
+}
+
+export async function signOut() {
+  try {
+    const session = await getSession();
+  console.log("Session:", session?.token);
+  const data = await axios.get("https://exam.elevateegy.com/api/v1/auth/logout", {
+    headers: { token: session?.token },
+  });
+console.log('Data:', data);
+nextAuthSignOut({ redirect: false });
+    document.cookie = "next-auth.session-token=; Max-Age=0; path=/;";
+  return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || "Something went wrong.";
       Swal.fire({
-        title: "Error",
+        icon: 'error',
+        title: 'Error',
         text: errorMessage,
-        icon: "error",
       });
+      return Promise.reject(errorMessage);
+    } else {
+      return Promise.reject("An unexpected error occurred.");
     }
   }
 }
-

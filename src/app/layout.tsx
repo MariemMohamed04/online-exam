@@ -2,9 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
-import SideBanner from "./sideBanner/sideBanner";
-import Navbar from "@/containers/Navbar";
-import SocialProviders from '@/containers/AuthLayout/SocialProviders'
+
 
 export const metadata: Metadata = {
   title: "Online Exam",
@@ -18,20 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+            <head>
+      <link rel="icon" href="/favicon.svg" type="image/svg" />
+      </head>
       <body>
         <AuthProvider>
-          <div className={`grid grid-cols-1 lg:grid-cols-2 h-screen`}>
-            <div className="sideOne hidden lg:block">
-              <SideBanner />
-            </div>
-            <div className="sideTwo col-span-1 lg:col-span-1 mb-20">
-              <Navbar />
-              <div className="mt-[50px]">
-                {children}
-                <SocialProviders />
-              </div>
-            </div>
-          </div>
+          {children}
         </AuthProvider>
       </body>
     </html>

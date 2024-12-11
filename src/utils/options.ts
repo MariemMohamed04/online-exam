@@ -10,7 +10,7 @@ import axios from "axios";
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: "/signin", 
+    signIn: "/auth/signin", 
   },
   session: {
     strategy: "jwt"
@@ -58,22 +58,17 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials: any) {
         const { email, password } = credentials!;
         try {
-          const response = await axios.post("https://exam.elevateegy.com/api/v1/auth/signin", {
+          const { data } = await axios.post("https://exam.elevateegy.com/api/v1/auth/signin", {
             email,
             password,
           });
 
-          if (response.data.message === "success") {
-            const { token, user } = response.data;
-            return {
-              id: user._id,
-              username: user.username,
-              email: user.email,
-              token,
-            };
+          if (data.message === "success") {
+            console.log('Data: ',data);
+            return data;
           }
           return null;
         } catch (error) {
@@ -83,59 +78,18 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-
-  //   // async jwt({ token, user, account }: any) {
-  //   //   if (user) {
-  //   //     token.token = (user as any).token;
-  //   //     token.id = (user as any).id;
-  //   //     token.email = (user as any).email;
-  //   //     token.provider = user.provider;
-  //   //   }
-  //   //   return token;
-  //   // },
-  //   async jwt({ token, user, account }: any) {
-  //     if (user && account) {
-  //       token.provider = account.provider; 
-  //       console.log('account.provider', account.provider)
-  //       console.log('token.provider', token.provider)// Set the provider from account info
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, token }: any) {
-  //     if (token) {
-  //       session.token = (token as any).token;
-  //       session.provider = token.provider;
-  //       // session.id = token.id;
-  //       // session.email = token.email;
-  //       console.log(session.token);
-  //       console.log(session.provider);
-        
-        
-  //     }
-  //     return session;
-  //   },
-  // },
   
   callbacks: {
-    async jwt({ token, user, account }: any) {
-      if (account && account.provider) {
-        token.provider = account.provider; 
-        console.log("OAuth Login - Provider:", account.provider);
-      } else if (user) {
-        token.provider = "credentials";
-        token.token = user.token;
-        console.log("Credentials Login - Provider: credentials");
-      }
-      return token;
+    async jwt({ token, user }) {
+      // console.log('all user data' , user );
+      return { ...token , ...user };
     },
-    async session({ session, token }: any) {
-      session.token = token.token;
-      session.provider = token.provider;
-      console.log("Session Data - Provider:", session.provider);
-      console.log("Session Data - token:", session.token);
-      return session;
+
+    async session({ session, token }) {
+      // console.log('all user session' , session );
+      return { ...session , ...token };
     },
   },
   
-  
+  secret: process.env.NEXTAUTH_SECRET,
 };

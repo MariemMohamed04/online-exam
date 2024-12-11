@@ -4,7 +4,7 @@ import SignInForm from '@/containers/SignIn'
 import React from 'react'
 import HeaderComponent from '@/components/Header'
 
-export default function page() {
+export default function SignIn() {
   return (
     <>
     <div className="flex justify-center items-center flex-col">
@@ -12,6 +12,7 @@ export default function page() {
     <SignInForm/>
 </div>
     <DebugComponent/>
+
     </>
   )
 }

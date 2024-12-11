@@ -8,7 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter, usePathname  } from 'next/navigation';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { signout } from '@/services/authService';
+import { useSignout } from '@/services/auth';
 
 
 export default function Navbar() {
@@ -16,10 +16,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
+  const { signout } = useSignout();
   // const session = useSession();
   const handleSignOut = async () => {
-    console.log('Provider');
-    console.log(session?.provider);
+    console.log('Provider', session?.provider);
+    // debugger;
     try {
       if (session?.provider === "google" || session?.provider === "facebook" || session?.provider === "twitter") {
         const result = await Swal.fire({
@@ -43,7 +44,7 @@ export default function Navbar() {
         const response = await signout();
         console.log(response)
       }
-      router.push("/signin");
+      router.push("/auth/signin");
     } catch (error: any) {
       console.error("Error during sign-out:", error.message);
     }
@@ -54,18 +55,7 @@ export default function Navbar() {
     <>
       <div className="flex justify-end items-center mt-[40px]">
 <div className=" text-right h-[42px] w-[362px] pr-[80px]">
-{session ? (
-          <>
-            <button
-              onClick={handleSignOut}
-              className=" hover:text-gray-800 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Sign Out
-            </button>
-          </>
-        ) : (
-          <>
-  <Link
+<Link
                 href="/signin"
                 className={`${
                   pathname === '/signin'
@@ -85,8 +75,6 @@ export default function Navbar() {
               >
                 Register
               </Link>
-          </>
-        )}
 </div>
       </div>
     </>

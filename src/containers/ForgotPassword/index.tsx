@@ -8,9 +8,11 @@ import FieldComponent from '@components/Field/index';
 import ButtonComponent from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { forgotPassword } from '@/services/authService';
+import { forgotPassword } from '@/services/auth';
 import Swal from 'sweetalert2';
 import Loading from '@/components/Loading';
+import { useDispatch } from 'react-redux';
+import { setEmail } from '@/redux/store';
 
 
 const validationSchema = Yup.object({
@@ -19,14 +21,16 @@ const validationSchema = Yup.object({
     .required("Email is required")
 });
 export default function ForgotPassword() {
-
+  // const dispatch = useDispatch();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const handleSubmit = async (values: any) => {
     const { email } = values;
     try {
       setLoading(true);
-      await forgotPassword(email);
+      const response = await forgotPassword(email);
+      console.log(response);
+      // dispatch(setEmail(email));
       router.push('/verifyCode');
     } catch (error) {
       console.error(error);

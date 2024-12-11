@@ -5,7 +5,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import FieldComponent from '@components/Field/index';
 import ButtonComponent from "@/components/Button";
-import { resetPassword } from "@/services/authService";
+import { resetPassword } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Loading from "@/components/Loading";
@@ -37,13 +37,13 @@ export default function ResetPasswordForm() {
       if (res.data.message === "success" && res.data.token) {
         await signIn("credentials", {
           token: res.data.token,
-          callbackUrl: "/client",
+          callbackUrl: "/signin",
           redirect: false,
         });
   
         console.log("Token successfully set in session");
       }
-      router.push('/client');
+      router.push('/signin');
     } catch (error) {
       console.error(error);
     } finally {

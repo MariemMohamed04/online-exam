@@ -7,9 +7,10 @@ import { Formik, Form, ErrorMessage } from "formik";
 import FieldComponent from '@components/Field/index';
 import ButtonComponent from '@/components/Button';
 import { useRouter } from 'next/navigation';
-import { verifyResetCode } from '@/services/authService';
+import { forgotPassword, verifyResetCode } from '@/services/auth';
 import Link from 'next/link';
 import Loading from '@/components/Loading';
+import { useSelector } from 'react-redux';
 
 
 const validationSchema = Yup.object({
@@ -18,6 +19,7 @@ const validationSchema = Yup.object({
 });
 
 export default function VerifyCode() {
+  // const email = useSelector((state: any) => state.email.value);
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const handleSubmit = async (values: any) => {
@@ -32,6 +34,16 @@ export default function VerifyCode() {
       setLoading(false);
     }
   };
+
+  const handleResend = async () => {
+    // try {
+    //   await forgotPassword(email);
+    //   console.log('Code resent to:', email);
+    // } catch (error) {
+    //   console.error('Error resending code:', error);
+    // }
+  };
+
   return (
     <>
     <div className="flex flex-col gap-8 justify-center items-center h-full">
@@ -58,6 +70,7 @@ export default function VerifyCode() {
             <div className="text-right">
             Didn’t receive a code?
               <Link href={'/forgotPassword'} className='pl-1 text-[#4461F2]'>Resend</Link>
+              <button className='pl-1 text-[#4461F2]'>Resend</button>
             </div>
             {isLoading ? (
                 <Loading />

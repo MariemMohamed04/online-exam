@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -6,9 +8,9 @@ import Swal from "sweetalert2";
 import { getSession, signIn } from "next-auth/react";
 import FieldComponent from '@components/Field/index';
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonComponent from "@/components/Button";
-import { signin } from "@/services/authService";
+import { signin } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
 
@@ -27,39 +29,50 @@ const validationSchema = Yup.object({
 export default function SignInForm() {
 
   const [rememberMe, setRememberMe] = useState(false);
-  const router = useRouter();
   const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const expiryTime = localStorage.getItem("expiryTime") || sessionStorage.getItem("expiryTime");
+
+    if (token && expiryTime && new Date().getTime() < parseInt(expiryTime)) {
+      router.push("/dashboard/home");
+    }
+  }, []);
 
   const handleSubmit = async (values: any) => {
-    const { email, password } = values;
+
     try {
       setLoading(true);
-      const response = await signin(email, password);
+      const response = await signin(values);
       console.log(response);
-      
-      if (response?.ok) {
-        const session = await getSession();
-        const token = session?.token;
 
-        if (token) {
-          const expiryTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+      // if (response?.ok) {
+      //   const session = await getSession();
+      //   console.log("Session:", session?.token);
+      //   const token = session?.token;
 
-          if (rememberMe) {
-            localStorage.setItem("token", token);
-            localStorage.setItem("expiryTime", expiryTime.toString());
-          } else {
-            sessionStorage.setItem("token", token);
-            sessionStorage.setItem("expiryTime", expiryTime.toString());
-          }
-        }
-        router.push("/home/client");
-      }
+      //   if (token) {
+      //     const expiryTime = new Date().getTime() + 24 * 60 * 60 * 1000;
+
+      //     if (rememberMe) {
+      //       localStorage.setItem("token", token);
+      //       localStorage.setItem("expiryTime", expiryTime.toString());
+      //     } else {
+      //       sessionStorage.setItem("token", token);
+      //       sessionStorage.setItem("expiryTime", expiryTime.toString());
+      //     }
+
+      //   }
+      // }
+      router.push("/dashboard/home");
     } catch (error) {
-      console.error(error);
-    }finally {
+      console.error("Login error:", error);
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
 
 
@@ -101,13 +114,14 @@ export default function SignInForm() {
             </div>
             <div className="flex justify-between items-center">
               <div className="form-field flex items-center">
-                <Field
-                  type="checkbox"
-                  name="rememberMe"
-                  id="rememberMe"
-                  className="mr-2"
-                />
-                <label htmlFor="rememberMe">Remember Me</label>
+              <label>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              Remember Me
+            </label>
               </div>
 
               <Link
