@@ -88,11 +88,26 @@ a {
 }
 
 #quiz-search {
-  background-color: #f8f9fa;
-  border: 2px solid #007bff;
+  background-color: #fff;
+  border: none;
   width: 762px;
   height: 61px;
   padding-left: 2.5rem;
+  border-radius: 20px;
   font-size: 14px;
+  box-shadow: 0px 15px 40px 0px #0000001A;
+
 }
+
+#quiz-search::placeholder {
+  color: #696F79;
+  font: 400 19px var(--secondary-font);
+}
+
+/*
+
+box-shadow: 0px 15px 40px 0px #0000001A;
+
+
+*/
 

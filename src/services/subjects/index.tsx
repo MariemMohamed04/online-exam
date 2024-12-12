@@ -1,5 +1,6 @@
 // "use client"
 
+import { baseUrl } from "@/utils/consts";
 import axios from "axios";
 import { getSession } from "next-auth/react";
 import Swal from "sweetalert2";
@@ -8,7 +9,7 @@ export async function fetchSubjects() {
   try {
     const session = await getSession();
   console.log("Session:", session?.token);
-  const { data } = await axios.get("https://exam.elevateegy.com/api/v1/subjects", {
+  const { data } = await axios.get(`${baseUrl}/subjects`, {
     headers: { token: session?.token },
   });
 console.log('Subjects', data.subjects);

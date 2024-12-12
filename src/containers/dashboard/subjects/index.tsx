@@ -50,71 +50,36 @@ export default function Subjects() {
 
   return (
     <>
-{toasterMessage && (
-        isSuccess ? (
-          <SuccessToaster message={toasterMessage} />
-        ) : (
-          <FailToaster message={toasterMessage} />
-        )
-      )}
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div className={`grid grid-cols-2 md:grid-cols-3 gap-4 bg-pink-300`}>
-          {subjects.length === 0 ? (
-            <p>No subjects available</p>
+      <div className="w-[1063px] bg-white rounded-[20px] py-8 px-4 shadow-[0px_15px_40px_0px_rgba(0,0,0,0.05)] mb-9">
+        {toasterMessage && (
+          isSuccess ? (
+            <SuccessToaster message={toasterMessage} />
           ) : (
-            subjects.map((subject, index) => (
-              <SingleSubject subjects={subject} key={index} />
-            ))
-          )}
-        </div>
-      )}
+            <FailToaster message={toasterMessage} />
+          )
+        )}
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <div className="">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className='font-medium text-[#4461F2] text-[24px]'>Quizzes</h4>
+                <h4 className='font-medium text-[#4461F2] text-[24px]'>View all</h4>
+              </div>
+              <div className={`grid grid-cols-2 md:grid-cols-3 gap-4`}>
+                {subjects.length === 0 ? (
+                  <p>No subjects available</p>
+                ) : (
+                  subjects.map((subject, index) => (
+                    <SingleSubject subjects={subject} key={index} />
+                  ))
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 }
-/*
-
-
-
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-6.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-7.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-8.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-9.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-10.jpg" alt="">
-    </div>
-    <div>
-        <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-11.jpg" alt="">
-    </div>
-</div>
-
-
-*/
