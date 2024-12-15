@@ -34,12 +34,3 @@ export default function SearchBar() {
     </>
   )
 }
-/*
-width: 21.12px;
-height: 21.12px;
-top: 1.53px;
-left: 1.53px;
-gap: 0px;
-opacity: 0px;
-
-*/

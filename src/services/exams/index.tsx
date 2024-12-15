@@ -28,7 +28,7 @@ console.log('Exams:', data.exams);
   }
 }
 
-export async function fetchExamsOnSubject(id: number) {
+export async function fetchExamsOnSubject(id: string) {
   try {
     const session = await getSession();
   console.log("Session:", session?.token);

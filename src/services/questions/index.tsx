@@ -3,7 +3,7 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 import Swal from "sweetalert2";
 
-export async function fetchQuestionsOnExam(id: number) {
+export async function fetchQuestionsOnExam(id: string) {
   try {
     const session = await getSession();
     console.log("Session:", session?.token);

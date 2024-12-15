@@ -4,7 +4,7 @@ import Link from "next/link";
 interface Subject {
   _id?: string;
   name?: string;
-  icon?: string
+  icon?: string;
 }
 
 interface SingleSubjectProps {
