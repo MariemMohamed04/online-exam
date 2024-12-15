@@ -7,7 +7,7 @@ import SearchBar from "@/containers/dashboard/searchBar";
 import Progress from "@/containers/dashboard/progress";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Online Exam - Dashboard",
   description: "Dashboard for managing exams",
 };
 

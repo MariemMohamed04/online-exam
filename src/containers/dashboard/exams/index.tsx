@@ -55,7 +55,7 @@ export default function Exams({ subjectId }: { subjectId: string }) {
   const frameworkExams = exams.filter((exam) => frameworkQuiz.includes(exam.title || ""));
 
   return (
-    <div className="w-[1063px] bg-pink-400 mb-9">
+    <div className="w-[1063px] mb-9">
       {toasterMessage && (
         isSuccess ? (
           <SuccessToaster message={toasterMessage} />
@@ -84,7 +84,7 @@ export default function Exams({ subjectId }: { subjectId: string }) {
             </div>
           )}
           {frontendExams.length === 0 && frameworkExams.length === 0 && (
-            <p>No exams available</p>
+            <p className='font-medium text-[#0F0F0F] text-[18px]'>No exams available</p>
           )}
         </div>
       )}
