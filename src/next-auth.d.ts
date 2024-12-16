@@ -14,6 +14,7 @@ declare module "next-auth" {
   interface Session {
     token: string;
     provider?: string;
+    user?: User;
   }
 }
 

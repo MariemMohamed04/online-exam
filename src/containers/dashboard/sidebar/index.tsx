@@ -6,8 +6,17 @@ import React from 'react';
 import { MdSpaceDashboard } from "react-icons/md";
 import { MdOutlineHistory } from "react-icons/md";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { signOut } from '@/services/auth';
+import { useRouter } from 'next/navigation';
 
 export default function SideBar() {
+    const router = useRouter();
+    const handleSignOut = async () => {
+      const response = await signOut();
+          console.log(response);
+  router.push("/auth/signin");
+    }
+
   return (
     <>
       <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -44,13 +53,13 @@ export default function SideBar() {
               </Link>
             </li>
             <li>
-              <Link href={'/'} className="flex items-center space-x-4 text-gray-900 rounded-[10px] p-2 dark:text-white hover:bg-[#4461F2] group transition">
+              <div onClick={handleSignOut} className="cursor-pointer flex items-center space-x-4 text-gray-900 rounded-[10px] p-2 dark:text-white hover:bg-[#4461F2] group transition">
                 <RiLogoutBoxFill
                   className="text-[#4461F2] group-hover:text-white transition"
                   style={{ fontSize: "20px" }}
                 />
                 <span className="text-[#696F79] font-semibold text-xl group-hover:text-white transition">Log Out</span>
-              </Link>
+              </div>
             </li>
           </ul>
         </div>

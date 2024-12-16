@@ -6,17 +6,7 @@ import { fetchQuestionsOnExam } from '@/services/questions';
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import SingleQuestion from '../single-question';
-
-interface Answer {
-  answer: string;
-  key: string;
-}
-
-interface Question {
-  _id?: string;
-  question?: string;
-  answers?: Answer[];
-}
+import Question from "@/interfaces/IQuestion"
 
 export default function Questions() {
   const [questions, setQuestions] = useState<Question[]>([]);

@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
+import { ReduxProvider } from "@/providers/redux-provider";
 
 
 export const metadata: Metadata = {
@@ -20,9 +21,11 @@ export default function RootLayout({
       <link rel="icon" href="/favicon.svg" type="image/svg" />
       </head>
       <body>
+        <ReduxProvider>
         <AuthProvider>
           {children}
         </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

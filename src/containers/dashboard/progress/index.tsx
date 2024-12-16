@@ -1,7 +1,20 @@
-import Image from 'next/image'
-import React from 'react'
+import Image from 'next/image';
+import React from 'react';
+// import { getServerSession } from 'next-auth';
+// import { authOptions } from '@/utils/options';
 
+
+// export async function getServerSideProps(context: any) {
+//   const session = await getServerSession(context.req, context.res, authOptions);
+
+//   return {
+//     props: {
+//       session,
+//     },
+//   };
+// }
 export default function Progress() {
+
   return (
     <>
       <div className="w-[1063px] bg-white py-8 px-4 rounded-[20px] shadow-[0px_15px_40px_0px_rgba(0,0,0,0.05)] flex mb-9">
@@ -9,7 +22,7 @@ export default function Progress() {
           <Image src={'/images/pfp.png'} alt={'pfp'} width={216} height={216} />
         </div>
         <div>
-          <h1 className='text-[#4461F2] font-bold text-[32px]'>Ahmed Mohamed</h1>
+          <h1 className='text-[#4461F2] font-bold text-[32px]'>Guest</h1>
           <p className='text-[#979CA3] mb-6'>Voluptatem aut</p>
           <div className="bg-[#f5f5f5] w-[619px] h-[12px] rounded-[30px] mb-6">
             <div className="bg-[#4461F2] w-[434px] h-[12px] rounded-[30px]"></div>
@@ -48,6 +61,3 @@ export default function Progress() {
     </>
   )
 }
-/*
-
- */

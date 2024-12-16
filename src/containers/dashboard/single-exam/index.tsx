@@ -4,6 +4,8 @@
 import React, { useState } from "react";
 import Modal from "@/components/modal";
 import Questions from "@/containers/dashboard/questions";
+import { useDispatch } from 'react-redux';
+import { fetchQuestionsRequest } from '@/redux/store/Questions/actions';
 
 interface Exam {
   _id?: string;
@@ -20,8 +22,12 @@ interface SingleExamProps {
 export default function SingleExam({ exams }: SingleExamProps) {
   const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false);
   const [isQuestionsModalOpen, setIsQuestionsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const handleStartQuiz = () => {
+    if (exams._id) {
+      dispatch(fetchQuestionsRequest(exams._id));
+    }
     setIsInstructionModalOpen(false);
     setIsQuestionsModalOpen(true);
   };
