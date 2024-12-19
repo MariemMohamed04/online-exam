@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client"
+"use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -11,14 +11,14 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isModalOpen, onClose, onStartQuiz }) => {
   if (!isModalOpen) return null;
-
+  
   return (
     <div
       tabIndex={-1}
       aria-hidden="true"
       className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-screen bg-black bg-opacity-50"
     >
-      <div className="bg-white p-6 w-[648px] h-[309px] rounded-[20px]">
+      <div className="bg-white p-6 w-[648px] h-fit rounded-[20px]">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-2xl font-medium text-[#0F0F0F]">Instructions</h3>
           <button

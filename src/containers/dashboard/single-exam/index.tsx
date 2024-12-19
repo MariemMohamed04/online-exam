@@ -6,14 +6,7 @@ import Modal from "@/components/modal";
 import Questions from "@/containers/dashboard/questions";
 import { useDispatch } from 'react-redux';
 import { fetchQuestionsRequest } from '@/redux/store/Questions/actions';
-
-interface Exam {
-  _id?: string;
-  title?: string;
-  duration?: number;
-  numberOfQuestions?: number;
-  active?: boolean;
-}
+import Exam from "@/interfaces/IExam";
 
 interface SingleExamProps {
   exams: Exam;

@@ -37,6 +37,6 @@
       "@interfaces/*": ["src/interfaces/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils/countdown.js"],
   "exclude": ["node_modules"]
 }
